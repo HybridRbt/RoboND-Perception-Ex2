@@ -27,8 +27,10 @@ def pcl_callback(pcl_msg):
     cloud_table = extract_inliers(inliers, pcl_passed)
     cloud_objects = extract_outliers(inliers, pcl_passed)
 
-    # TODO: Euclidean Clustering
-
+    # Euclidean Clustering
+    white_cloud = XYZRGB_to_XYZ(cloud_objects)
+    tree = white_cloud.make_kdtree()
+    
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
 
     # Convert PCL data to ROS messages
