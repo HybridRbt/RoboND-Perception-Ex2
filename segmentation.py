@@ -27,9 +27,9 @@ def clustering(pcl_data):
 
     # Extract indices for each of the discovered clusters
     cluster_indices = ec.Extract()
-    return cluster_indices
+    return white_cloud, tree, cluster_indices
 
-def color_clusters(cluster_indices):
+def color_clusters(pcl_data_xyz, cluster_indices):
     # Assign a color corresponding to each segmented object in scene
     cluster_color = get_color_list(len(cluster_indices))
 
@@ -39,9 +39,9 @@ def color_clusters(cluster_indices):
     # traverse the indices and append to the list
     for j, indices in enumerate(cluster_indices):
         for i, indice in enumerate(indices):
-            color_cluster_point_list.append([white_cloud[indice][0],
-                                             white_cloud[indice][1],
-                                             white_cloud[indice][2],
+            color_cluster_point_list.append([pcl_data_xyz[indice][0],
+                                             pcl_data_xyz[indice][1],
+                                             pcl_data_xyz[indice][2],
                                              rgb_to_float(cluster_color[j])])
     # Create new cloud containing all clusters colored
     cluster_cloud_colored = pcl.PointCloud_PointXYZRGB()
@@ -70,10 +70,10 @@ def pcl_callback(pcl_msg):
     cloud_objects = extract_outliers(inliers, pcl_passed)
 
     # Euclidean Clustering
-    cluster_indices = clustering(cloud_objects)
+    white_cloud, tree, cluster_indices = clustering(cloud_objects)
 
     # Create Cluster-Mask Point Cloud to visualize each cluster separately
-    cluster_cloud_colored = color_clusters(cluster_indices)
+    cluster_cloud_colored = color_clusters(white_cloud, cluster_indices)
 
     # Convert PCL data to ROS messages
     ros_cloud_table = pcl_to_ros(cloud_table)
@@ -84,7 +84,7 @@ def pcl_callback(pcl_msg):
     pcl_objects_pub.publish(ros_cloud_objects)
     pcl_table_pub.publish(ros_cloud_table)
     pcl_cluster_pub.publish(ros_cluster_cloud_colored)
-    
+
 if __name__ == '__main__':
 
     # ROS node initialization
