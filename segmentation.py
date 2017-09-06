@@ -29,6 +29,25 @@ def clustering(pcl_data):
     cluster_indices = ec.Extract()
     return cluster_indices
 
+def color_clusters(cluster_indices):
+    # Assign a color corresponding to each segmented object in scene
+    cluster_color = get_color_list(len(cluster_indices))
+
+    # create a list for the colored cluster points
+    color_cluster_point_list = []
+
+    # traverse the indices and append to the list
+    for j, indices in enumerate(cluster_indices):
+        for i, indice in enumerate(indices):
+            color_cluster_point_list.append([white_cloud[indice][0],
+                                             white_cloud[indice][1],
+                                             white_cloud[indice][2],
+                                             rgb_to_float(cluster_color[j])])
+    # Create new cloud containing all clusters colored
+    cluster_cloud_colored = pcl.PointCloud_PointXYZRGB()
+    cluster_cloud_colored.from_list(color_cluster_point_list)
+    return cluster_cloud_colored
+    
 # Callback function for your Point Cloud Subscriber
 def pcl_callback(pcl_msg):
 
@@ -51,7 +70,7 @@ def pcl_callback(pcl_msg):
     cloud_objects = extract_outliers(inliers, pcl_passed)
 
     # Euclidean Clustering
-
+    cluster_indices = clustering(cloud_objects)
 
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
 
