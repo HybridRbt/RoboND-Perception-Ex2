@@ -4,7 +4,30 @@
 from pcl_helper import *
 from RANSAC import *
 
-# TODO: Define functions as required
+# Define functions as required
+def clustering(pcl_data):
+    # Create k-d tree
+    white_cloud = XYZRGB_to_XYZ(pcl_data)
+    tree = white_cloud.make_kdtree()
+
+    # Create a cluster extraction object
+    ec = white_cloud.make_EuclideanClusterExtraction()
+
+    # Set tolerances for distance threshold
+    ec.set_ClusterTolerance(0.001)
+
+    # Set minimum cluster size
+    ec.set_MinClusterSize(10)
+
+    # Set maximum cluster size
+    ec.set_MaxClusterSize(250)
+
+    # Search the k-d tree for clusters
+    ec.set_SearchMethod(tree)
+
+    # Extract indices for each of the discovered clusters
+    cluster_indices = ec.Extract()
+    return cluster_indices
 
 # Callback function for your Point Cloud Subscriber
 def pcl_callback(pcl_msg):
@@ -28,9 +51,8 @@ def pcl_callback(pcl_msg):
     cloud_objects = extract_outliers(inliers, pcl_passed)
 
     # Euclidean Clustering
-    white_cloud = XYZRGB_to_XYZ(cloud_objects)
-    tree = white_cloud.make_kdtree()
-    
+
+
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
 
     # Convert PCL data to ROS messages
