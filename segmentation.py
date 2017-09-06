@@ -47,7 +47,7 @@ def color_clusters(cluster_indices):
     cluster_cloud_colored = pcl.PointCloud_PointXYZRGB()
     cluster_cloud_colored.from_list(color_cluster_point_list)
     return cluster_cloud_colored
-    
+
 # Callback function for your Point Cloud Subscriber
 def pcl_callback(pcl_msg):
 
@@ -72,11 +72,13 @@ def pcl_callback(pcl_msg):
     # Euclidean Clustering
     cluster_indices = clustering(cloud_objects)
 
-    # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
+    # Create Cluster-Mask Point Cloud to visualize each cluster separately
+    cluster_cloud_colored = color_clusters(cluster_indices)
 
     # Convert PCL data to ROS messages
     ros_cloud_table = pcl_to_ros(cloud_table)
     ros_cloud_objects = pcl_to_ros(cloud_objects)
+    ros_cluster_cloud_colored = pcl_to_ros(cluster_cloud_colored)
 
     # Publish ROS messages
     pcl_objects_pub.publish(ros_cloud_objects)
