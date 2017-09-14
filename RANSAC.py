@@ -48,7 +48,11 @@ def plane_fitting(pcl_data):
     seg.set_method_type(pcl.SAC_RANSAC)
 
     # Max distance for a point to be considered fitting the model
-    max_distance = 0.01 # this leaves only the table
+    # Note: in lesson 3-15, the quizz for this number claims it's 0.01
+    # but in that case the front of the table will show, and will keep showing
+    # until increased to 0.034. but in this case the bottom of the bowl will be
+    # cut. Need to figure out which number to take.
+    max_distance = 0.035 # this leaves only the table
     seg.set_distance_threshold(max_distance)
 
     # Call the segment function to obtain set of inlier indices and model coefficients
